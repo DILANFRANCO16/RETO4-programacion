@@ -58,10 +58,88 @@ class EntidadSistema(ABC):
          self.__activo = False
          logger.info(f"Entidad {self.__id} ({self.__class__.__name__}) desactivada.")
 
+     @abstractmethod
+     def obtener_resumen(self) -> str:
+         """Método obligatorio para representar el estado de cualquier entidad."""
+          pass
+
+# 4.CLASE CLIENTE 
+#===================================================================================
+class Cliente(EntidadSistema):
+    """Representa un cliente con datos encapsulados y gestión interna de historial."""
+
+    def __init__(self, nombre: str, email: str, telefono: str, saldo: float = 0.0):
+        super().__init__()
+        self.nombre = nombre
+        self.email = email
+        self.telefono = telefono
+        self.saldo = saldo
+        self.__historial_reservas: List[str] = []
+
+       @property
+       def nombre(self) -> str:
+           return self.__nombre
+
+       @nombre.setter
+       def nombre(self, valor: str) -> None:
+           if not isinstance(valor, str) or len(valor.strip()) < 3:
+               raise ErrorValidacionDatos("nombre", "Debe tener al menos 3 caracteres.")
+            self.__nombre = valor.strip().title()
+
+       @property
+        def email(self) -> str:
+            return self.__email
+
+       @email.setter
+       def email(self, valor: str) -> None:
+           patron = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+           if not isinstance(valor, str) or not re.match(patron, valor):
+               raise ErrorValidacionDatos("email", f"Formato de correo inválido: '{valor}'.")
+           self.__email = valor.lower().strip()
+
+        @property
+        def telefono(self) -> str:
+            return self.__telefono
+
+        @telefono.setter
+        def telefono(self, valor: str) -> None:
+            limpio = re.sub(r"[\s\-\+]", "", str(valor))
+            if not limpio.isdigit() or not (7 <= len(limpio) <= 15):
+                raise ErrorValidacionDatos("telefono", "Debe contener entre 7 y 15 dígitos.")
+            self.__telefono = valor.strip()
+
+        @property
+        def saldo(self) -> float:
+            return self.__saldo
+
+        @saldo.setter
+        def saldo(self, valor: float) -> None:
+            if not isinstance(valor, (int, float)) or valor < 0:
+                raise ErrorValidacionDatos("saldo", "El saldo no puede ser negativo.")
+                self.__saldo = float(valor)
+
+        @property
+        def historial_reservas(self) -> List[str]:
+            """Devuelve una copia para evitar mutaciones externas de la lista interna."""
+            return list(self.__historial_reservas)
+
+        def registrar_reserva_en_historial(self, id_reserva: str) -> None:
+            if id_reserva not in self.__historial_reservas:
+                self.__historial_reservas.append(id_reserva)
+
+        def descontar_saldo(self, monto: float) -> None:
+            if monto <= 0:
+                raise ErrorProcesamientoPago("El monto a descontar debe ser mayor a cero.")
+            if monto > self.__saldo:
+                raise ErrorProcesamientoPago(
+                    f"Saldo insuficiente (${self.__saldo:.2f}) para cubrir ${monto:.2f}."
+                )
+            self.__saldo -= monto
+
+         def obtener_resumen(self) -> str:
+             return (
+                 f"[Cliente {self.id}] {self.nombre} | Email: {self.email} | "
+                 f"Saldo: ${self.saldo:.2f} | Reservas: {len(self.__historial_reservas)}"
+             )
 
 
-             
-    
-        
-
-    
