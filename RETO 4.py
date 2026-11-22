@@ -142,4 +142,42 @@ class Cliente(EntidadSistema):
                  f"Saldo: ${self.saldo:.2f} | Reservas: {len(self.__historial_reservas)}"
              )
 
+#5. CLASE ABSTRACTA SERVICIO Y SERVICIOS ESPECIALIZADOS
+#============================================================================================
+class Servicio(EntidadSistema, ABC):
+    """Clase abstracta que modela cualquier servicio contratado en el sistema."""
+
+    def __init__(self, nombre: str, tarifa_base: float):
+        super().__init__()
+        if not nombre or len(nombre.strip()) < 3:
+            raise ErrorValidacionDatos("nombre_servicio", "Nombre demasiado corto.")
+        if tarifa_base <= 0:
+            raise ErrorValidacionDatos("tarifa_base", "La tarifa debe ser positiva.")
+
+        self.__nombre: str = nombre.strip()
+        self.__tarifa_base: float = float(tarifa_base)
+
+        @property
+        def nombre(self) -> str:
+            return self.__nombre
+
+        @property
+        def tarifa_base(self) -> float:
+            return self.__tarifa_base
+
+        @abstractmethod
+        def validar_parametros(self, duracion_horas: int) -> None:
+            """Valida restricciones específicas de tiempo o recursos del servicio."""
+            pass
+
+        @abstractmethod
+        def _calculo_base_polimorfico(self, duracion_horas: int) -> float:
+            """Cálculo interno específico según las reglas de cada servicio derivado."""
+            pass
+
+        @abstractmethod
+        def _calculo_base_polimorfico(self, duracion_horas: int) -> float:
+            """Cálculo interno específico según las reglas de cada servicio derivado."""
+            pass
+
 
