@@ -1,16 +1,67 @@
-# 1. MÓDULO DE REGISTRO DE EVENTOS Y ERRORES (LOGS)
+# 1. CONFIGURACION DEL SISTEMA DE LOGS
 #==================================================================
-class GestorLogs:
-    """Administra la escritura de eventos y excepciones en un archivo plano."""
-    def __init__(self, archivo_log: str = "sistema_fj.log"):
-        self.__archivo_log = archivo_log
-        def registrar(self, nivel: str, mensaje: str, detalle_error: Exception = None):
-            marca_tiempo = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            linea = f"[{marca_tiempo}] [{nivel.upper()}] {mensaje}"
-            if detalle_error is not None:
-                linea += f" | Excepción: {type(detalle_error).__name__}: {detalle_error}"
-                if detalle_error.__cause__:
-                    linea += f" (Causa original: {type(detalle_error.__cause__).__name__}: {detalle_error.__cause__})"
-                    linea += "\n"
-                    try:
-                        with open(self.__archivo_log, "a", encoding="utf-8") as archivo: archivo.write(linea)
+logging.basicConfig(
+    filename="sistema_reservas.log",
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    encoding="utf-8",
+    logger = logging.getLogger("SistemaIntegralPOO")
+
+# 2. JERARQUIA DE EXCEPCIONES PERSONALIZADAS 
+#====================================================================
+    class ErrorSistemaBase(exception):
+        """Excepción raíz para todos los errores controlados del sistema."""
+        def_init_(self, mensaje:str, codigo: int = 500):
+           super()._init_(mensaje)
+           self.codigo = codigo
+           self.timestamp = datetime.now()
+
+     class ErrorValidacionDatos(ErrorSistemaBase):
+         """Lanzada cuando un atributo no cumple las reglas de negocio."""
+          def __init__(self, campo: str, mensaje: str):
+            super().__init__(f"Error en '{campo}': {mensaje}", codigo=400)
+             self.campo = campo
+     class ErrorOperacionReserva(ErrorSistemaBase):
+        """Lanzada cuando ocurre un fallo en el ciclo de vida de una reserva."""
+         def __init__(self, mensaje: str):
+            super().__init__(mensaje, codigo=409)
+      class ErrorProcesamientoPago(ErrorSistemaBase):
+         """Lanzada cuando falla la transacción o cálculo financiero."""
+
+         def __init__(self, mensaje: str):
+             super().__init__(mensaje, codigo=402)
+
+#3. CLASE ABSTRACTA BASE DEL SISTEMA 
+#====================================================================
+class EntidadSistema(ABC):
+    """Clase abstracta raíz que define identidad y auditoría para las entidades."""
+
+     def __init__(self):
+         self.__id: str = str(uuid.uuid4())[:8].upper()
+         self.__fecha_creacion: datetime = datetime.now()
+         self.__activo: bool = True
+
+     @property
+     def id(self) -> str:
+         return self.__id
+
+     @property
+     def fecha_creacion(self) -> datetime:
+         return self.__fecha_creacion
+
+     @property
+      def activo(self) -> bool:
+          return self.__activo
+
+     def desactivar(self) -> None:
+         self.__activo = False
+         logger.info(f"Entidad {self.__id} ({self.__class__.__name__}) desactivada.")
+
+
+
+             
+    
+        
+
+    
