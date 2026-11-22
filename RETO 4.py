@@ -1,5 +1,4 @@
-# 1. CONFIGURACION DEL SISTEMA DE LOGS
-#==================================================================
+SISTEMA DE LOGS
 logging.basicConfig(
     filename="sistema_reservas.log",
     level=logging.INFO,
@@ -8,8 +7,8 @@ logging.basicConfig(
     encoding="utf-8",
     logger = logging.getLogger("SistemaIntegralPOO")
 
-# 2. JERARQUIA DE EXCEPCIONES PERSONALIZADAS 
-#====================================================================
+EXCEPCIONES PERSONALIZADAS 
+
     class ErrorSistemaBase(exception):
         """Excepción raíz para todos los errores controlados del sistema."""
         def_init_(self, mensaje:str, codigo: int = 500):
@@ -32,10 +31,10 @@ logging.basicConfig(
          def __init__(self, mensaje: str):
              super().__init__(mensaje, codigo=402)
 
-#3. CLASE ABSTRACTA BASE DEL SISTEMA 
-#====================================================================
+BASE DEL SISTEMA 
+
 class EntidadSistema(ABC):
-    """Clase abstracta raíz que define identidad y auditoría para las entidades."""
+    """Clase abstracta raíz define identidad y auditoría para las entidades."""
 
      def __init__(self):
          self.__id: str = str(uuid.uuid4())[:8].upper()
@@ -63,8 +62,7 @@ class EntidadSistema(ABC):
          """Método obligatorio para representar el estado de cualquier entidad."""
           pass
 
-# 4.CLASE CLIENTE 
-#===================================================================================
+CLASE CLIENTE 
 class Cliente(EntidadSistema):
     """Representa un cliente con datos encapsulados y gestión interna de historial."""
 
@@ -142,8 +140,8 @@ class Cliente(EntidadSistema):
                  f"Saldo: ${self.saldo:.2f} | Reservas: {len(self.__historial_reservas)}"
              )
 
-#5. CLASE ABSTRACTA SERVICIO Y SERVICIOS ESPECIALIZADOS
-#============================================================================================
+CLASE ABSTRACTA SERVICIO Y SERVICIOS ESPECIALIZADOS
+
 class Servicio(EntidadSistema, ABC):
     """Clase abstracta que modela cualquier servicio contratado en el sistema."""
 
