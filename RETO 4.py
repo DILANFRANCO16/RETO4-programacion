@@ -1,4 +1,6 @@
-SISTEMA DE LOGS
+class sistema
+
+Sistema
 logging.basicConfig(
     filename="sistema_reservas.log",
     level=logging.INFO,
