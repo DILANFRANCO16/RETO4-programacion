@@ -1,6 +1,6 @@
-class sistema
+#SISTEMA LOG
 
-Sistema
+class Sistema
 logging.basicConfig(
     filename="sistema_reservas.log",
     level=logging.INFO,
@@ -8,6 +8,8 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
     encoding="utf-8",
     logger = logging.getLogger("SistemaIntegralPOO")
+)
+
 
 EXCEPCIONES PERSONALIZADAS 
 
@@ -32,6 +34,8 @@ EXCEPCIONES PERSONALIZADAS
 
          def __init__(self, mensaje: str):
              super().__init__(mensaje, codigo=402)
+
+
 
 BASE DEL SISTEMA 
 
@@ -63,6 +67,8 @@ class EntidadSistema(ABC):
      def obtener_resumen(self) -> str:
          """Método obligatorio para representar el estado de cualquier entidad."""
           pass
+
+
 
 CLASE CLIENTE 
 class Cliente(EntidadSistema):
@@ -142,6 +148,8 @@ class Cliente(EntidadSistema):
                  f"Saldo: ${self.saldo:.2f} | Reservas: {len(self.__historial_reservas)}"
              )
 
+
+
 CLASE ABSTRACTA SERVICIO Y SERVICIOS ESPECIALIZADOS
 
 class Servicio(EntidadSistema, ABC):
@@ -180,7 +188,7 @@ class Servicio(EntidadSistema, ABC):
             """Cálculo interno específico según las reglas de cada servicio derivado."""
             pass
 
-# Serivicios especializados
+# Servicios especializados
 class ReservaSala(Servicio):
     """Servicio especializado para reserva de salas de trabajo o reuniones."""
 
